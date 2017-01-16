@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="srb_starBackgroundColor" format="reference|color" />
+    <attr name="srb_starFillColor" format="reference|color" />
+    <attr name="srb_starBorderColor" format="reference|color" />
+    <attr name="srb_starBorderWidth" format="reference|dimension" />
+    <attr name="srb_starCornerRadius" format="reference|dimension" />
+    <attr name="srb_starSize" format="reference|dimension" />
+    <attr name="srb_starPadding" format="reference|dimension" />
+
+    <declare-styleable name="StarIndicator">
+        <attr name="android:numStars"/>
+        <attr name="android:rating"/>
+        <attr name="android:gravity"/>
+        <attr name="srb_starSize"/>
+        <attr name="srb_starBackgroundColor"/>
+        <attr name="srb_starFillColor"/>
+        <attr name="srb_starBorderColor"/>
+        <attr name="srb_starBorderWidth"/>
+        <attr name="srb_starCornerRadius"/>
+        <attr name="srb_starPadding"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="StarRatingBar">
+        <attr name="android:numStars"/>
+        <attr name="android:rating"/>
+        <attr name="android:gravity"/>
+        <attr name="srb_starSize"/>
+        <attr name="srb_starBackgroundColor"/>
+        <attr name="srb_starFillColor"/>
+        <attr name="srb_starBorderColor"/>
+        <attr name="srb_starBorderWidth"/>
+        <attr name="srb_starCornerRadius"/>
+        <attr name="srb_starPadding"/>
+    </declare-styleable>
+
+</resources>
