@@ -211,7 +211,9 @@ public class StarRatingBar extends ViewGroup {
         mFilled.setSize(Math.round(mStarSize));
         mOutline.setSize(Math.round(mStarSize));
 
-        Gravity.apply(mGravity, (int) (mNumStars*mStarSize), (int) mStarSize, mBounds, mTmp);
+        Gravity.apply(mGravity,
+                Math.round(mNumStars*mStarSize + mStarPadding*(mNumStars - 1)),
+                Math.round(mStarSize), mBounds, mTmp);
 
         float left = mTmp.left;
 

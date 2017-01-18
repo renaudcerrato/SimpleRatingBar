@@ -17,15 +17,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:rating="3"
-        android:gravity="left"
-        app:srb_starSize="16dp"/>
+        android:numStars="7"
+        app:srb_starSize="0dp"/>
 
     <com.mypopsy.simpleratingbar.StarRatingBar
         android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:rating="3"
-        android:gravity="left"
-        app:srb_starSize="30dp"/>
+        android:numStars="7"
+        app:srb_starSize="0dp"/>
 
 </LinearLayout>
