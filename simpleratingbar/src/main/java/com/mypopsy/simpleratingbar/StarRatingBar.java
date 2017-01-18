@@ -188,7 +188,7 @@ public class StarRatingBar extends ViewGroup {
                 mStarSize = 0;
         }
 
-        int width = Math.round(mNumStars*mStarSize);
+        int width = Math.round(mNumStars*mStarSize + mStarPadding*(mNumStars - 1));
         int height = Math.round(mStarSize);
 
         if(wmode == MeasureSpec.EXACTLY)

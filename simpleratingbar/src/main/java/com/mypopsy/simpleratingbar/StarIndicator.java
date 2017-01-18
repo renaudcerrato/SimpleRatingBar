@@ -1,6 +1,7 @@
 package com.mypopsy.simpleratingbar;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 
@@ -21,7 +23,7 @@ public class StarIndicator extends View {
     private final StarDrawable mOutline = new StarDrawable();
     private final StarDrawable mFilled = new StarDrawable();
 
-    private final Rect mBounds = new Rect();
+    private final Rect mVisualBounds = new Rect();
     private final Rect mTmp = new Rect();
 
     private HorizontalStarDrawable mFilledStarsDrawable;
@@ -31,9 +33,10 @@ public class StarIndicator extends View {
     private android.graphics.drawable.Drawable mForeground;
 
     private int mNumStars;
-    private int mStarSize;
+    private float mStarSize;
     private int mGravity;
     private boolean isDirty;
+    private float mStarPadding;
 
     public StarIndicator(Context context) {
         this(context, null);
@@ -61,6 +64,7 @@ public class StarIndicator extends View {
         setNumStars(a.getInt(R.styleable.StarIndicator_android_numStars, 5));
         setRating(a.getFloat(R.styleable.StarIndicator_android_rating, 0));
         setGravity(a.getInt(R.styleable.StarIndicator_android_gravity, Gravity.CENTER));
+        setStarPadding(a.getDimensionPixelSize(R.styleable.StarIndicator_srb_starPadding, Math.round(toPixel(1))));
 
         setStarBackgroundColor(a.getColor(R.styleable.StarIndicator_srb_starBackgroundColor, Color.LTGRAY));
         setStarBorderColor(a.getColor(R.styleable.StarIndicator_srb_starBorderColor, 0));
@@ -121,8 +125,6 @@ public class StarIndicator extends View {
     public void setNumStars(int numStars) {
         if(mNumStars != numStars) {
             mNumStars = numStars;
-            mFilledStarsDrawable.setCount(numStars);
-            mOutlineStarsDrawable.setCount(numStars);
             requestLayout();
         }
     }
@@ -130,15 +132,13 @@ public class StarIndicator extends View {
     public void setStarSize(int size) {
         if(mStarSize != size) {
             mStarSize = size;
+            requestLayout();
+        }
+    }
 
-            mFilledStarsDrawable.setSize(size);
-            mOutlineStarsDrawable.setSize(size);
-
-            mFilledStarsDrawable.setBounds(0, 0, mFilledStarsDrawable.getIntrinsicWidth(), mFilledStarsDrawable.getIntrinsicHeight());
-            mOutlineStarsDrawable.setBounds(0, 0, mOutlineStarsDrawable.getIntrinsicWidth(), mOutlineStarsDrawable.getIntrinsicHeight());
-            mClipDrawable.setBounds(0, 0, mFilledStarsDrawable.getIntrinsicWidth(), mFilledStarsDrawable.getIntrinsicHeight());
-            mForeground.setBounds(0, 0, mClipDrawable.getIntrinsicWidth(), mClipDrawable.getIntrinsicHeight());
-
+    public void setStarPadding(int padding) {
+        if(mStarPadding != padding) {
+            mStarPadding = padding;
             requestLayout();
         }
     }
@@ -146,18 +146,35 @@ public class StarIndicator extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        if(mStarSize <= 0) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            return;
-        }
-
         final int wmode = MeasureSpec.getMode(widthMeasureSpec);
         final int hmode = MeasureSpec.getMode(heightMeasureSpec);
         final int suggestedWidth = MeasureSpec.getSize(widthMeasureSpec);
         final int suggestedHeight = MeasureSpec.getSize(heightMeasureSpec);
 
-        int width = mNumStars*mStarSize;
-        int height = mStarSize;
+        if(mStarSize <= 0) {
+            if(mNumStars > 0) {
+                mStarSize = suggestedWidth - getPaddingLeft() - getPaddingRight();
+                mStarSize -= mStarPadding*(mNumStars - 1);
+                mStarSize /= (float) mNumStars;
+            }else
+                mStarSize = 0;
+        }
+
+        mFilledStarsDrawable.setCount(mNumStars);
+        mOutlineStarsDrawable.setCount(mNumStars);
+
+        mFilledStarsDrawable.setSize(Math.round(mStarSize));
+        mOutlineStarsDrawable.setSize(Math.round(mStarSize));
+        mFilledStarsDrawable.setDivider(Math.round(mStarPadding));
+        mOutlineStarsDrawable.setDivider(Math.round(mStarPadding));
+
+        mFilledStarsDrawable.setBounds(0, 0, mFilledStarsDrawable.getIntrinsicWidth(), mFilledStarsDrawable.getIntrinsicHeight());
+        mOutlineStarsDrawable.setBounds(0, 0, mOutlineStarsDrawable.getIntrinsicWidth(), mOutlineStarsDrawable.getIntrinsicHeight());
+        mClipDrawable.setBounds(0, 0, mFilledStarsDrawable.getIntrinsicWidth(), mFilledStarsDrawable.getIntrinsicHeight());
+        mForeground.setBounds(0, 0, mClipDrawable.getIntrinsicWidth(), mClipDrawable.getIntrinsicHeight());
+
+        int width = mForeground.getBounds().width();
+        int height = mForeground.getBounds().height();
 
         if(wmode == MeasureSpec.EXACTLY)
             width = suggestedWidth;
@@ -169,7 +186,10 @@ public class StarIndicator extends View {
         else if(hmode == MeasureSpec.AT_MOST)
             height = Math.max(getSuggestedMinimumHeight(), Math.min(suggestedHeight, height));
 
-        mBounds.set(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(), height - getPaddingBottom());
+
+
+        mVisualBounds.set(getPaddingLeft(), getPaddingTop(), width - getPaddingRight(), height - getPaddingBottom());
+
         setMeasuredDimension(width, height);
         isDirty = true;
     }
@@ -179,7 +199,7 @@ public class StarIndicator extends View {
 
         if(isDirty) {
             Gravity.apply(mGravity, mForeground.getIntrinsicWidth(),
-                    mForeground.getIntrinsicHeight(), mBounds, mTmp);
+                    mForeground.getIntrinsicHeight(), mVisualBounds, mTmp);
             isDirty = false;
         }
 
@@ -193,5 +213,10 @@ public class StarIndicator extends View {
         if(mTmp.left != 0 || mTmp.top != 0) {
             canvas.restore();
         }
+    }
+
+    private float toPixel(float dp){
+        Resources r = getResources();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 }

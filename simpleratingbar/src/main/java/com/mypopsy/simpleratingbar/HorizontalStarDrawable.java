@@ -20,6 +20,7 @@ class HorizontalStarDrawable extends DrawableWrapper {
     private int mCount, mSize;
     private boolean isDirty = true;
     private int mGravity = Gravity.CENTER;
+    private int mDivider;
 
     HorizontalStarDrawable(StarDrawable drawable) {
         super(drawable);
@@ -41,6 +42,11 @@ class HorizontalStarDrawable extends DrawableWrapper {
         }
     }
 
+    void setDivider(int divider) {
+        this.mDivider = divider;
+        invalidateSelf();
+    }
+
     void setCount(int count) {
         if (mCount != count) {
             mCount = count;
@@ -56,7 +62,7 @@ class HorizontalStarDrawable extends DrawableWrapper {
 
     @Override
     public int getIntrinsicWidth() {
-        return mDrawable.getIntrinsicWidth() * mCount;
+        return mDrawable.getIntrinsicWidth() * mCount + mDivider*(mCount - 1);
     }
 
     @Override
@@ -76,7 +82,7 @@ class HorizontalStarDrawable extends DrawableWrapper {
         }
 
         for (int i = 0; i < mCount; i++) {
-            if (i > 0) canvas.translate(mDrawable.getIntrinsicWidth(), 0);
+            if (i > 0) canvas.translate(mDrawable.getIntrinsicWidth()+mDivider, 0);
             mDrawable.draw(canvas);
         }
 
