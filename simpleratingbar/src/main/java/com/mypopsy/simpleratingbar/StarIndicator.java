@@ -36,23 +36,16 @@ public class StarIndicator extends View {
     private boolean isDirty;
 
     public StarIndicator(Context context) {
-        super(context);
-        init(context, null, 0, 0);
+        this(context, null);
     }
 
     public StarIndicator(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs, 0, 0);
+        this(context, attrs, R.attr.starIndicatorStyle);
     }
 
     public StarIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs, defStyleAttr, 0);
-    }
-
-    public StarIndicator(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
