@@ -3,16 +3,11 @@ package com.mypopsy.simpleratingbar;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -47,7 +42,7 @@ public class StarRatingBar extends ViewGroup {
     private View.OnClickListener mClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setRating((Integer)v.getTag(), true);
+            setRating(indexOfChild(v) +1, true);
         }
     };
 
@@ -159,7 +154,6 @@ public class StarRatingBar extends ViewGroup {
                 star.setOnClickListener(mClickListener);
                 setStarDrawable(star, getChildCount() < mRating);
                 addView(star);
-                star.setTag(getChildCount());
             }
 
             requestLayout();
@@ -275,7 +269,7 @@ public class StarRatingBar extends ViewGroup {
         super.onRestoreInstanceState(ss.getSuperState());
     }
 
-    static class SavedState extends BaseSavedState {
+    private static class SavedState extends BaseSavedState {
 
         private int rating;
 
